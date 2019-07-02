@@ -17,11 +17,14 @@ wrapPointer(x, length, dataType = c("raw", "logical", "integer", "real"),
 
 \item{dataType}{character, the type of the data}
 
-\item{duplicateMethod}{character, the behavior of the duplication function, see details.}
+\item{duplicateMethod}{character, the behavior of the duplication function.
+Default is none, see details.}
 
-\item{coerceMethod}{character, the behavior of the coercion function, see details.}
+\item{coerceMethod}{character, the behavior of the coercion function.
+Default is none, see details.}
 
-\item{finalizer}{character, the behavior of the finalizer, see details.}
+\item{finalizer}{character, the behavior of the finalizer.
+Default is none, see details.}
 
 \item{attributes}{list, attributes that will be attached to the return value}
 
@@ -39,6 +42,12 @@ Any modification on the R vector will change the corresponding value in the
 vector pointer.
 }
 \details{
+For creating a wrapper for a pointer, the required arguments
+are `x`, `length` and `dataType`. The other arguments
+controls the behavior of the wrapper object and by default they
+would not do anything.
+
+
 `duplicateMethod` determines the behavior of the duplication function of 
 a wrapper. When a duplication is required, `duplicateMethod="duplicate"` will
 duplicate the object and result in a normal R vector; 
@@ -58,26 +67,31 @@ will release it through `free` operator.
 }
 \examples{
 n=10
+
 ## This is a C++ function to create an integer
 ## vector pointer of length n. It is for illustration purpose 
 ## only and user should not call this function.
 ## The return value is an ExternalPtr object
+
 intPtr=AltrepPointer:::test_int(n)
 
 ## Create a wrapper for the ExternalPtr object
 ## No duplication and coercion is allowed in order
 ## to make sure the object always uses data from the
 ## pointer.
+
 intVec=wrapPointer(intPtr,n,dataType="integer",
                    duplicateMethod = "error",
                    coerceMethod = "error",
                    finalizer="delete",
                    duplicateErrorMessage = "duplication is not allowed",
                    coerceErrorMessage = "coercion is not allowed"
-                 )
+                  )
 
+intVec
 
 ## There is no difference between the wrapper and a integer vector in R
+
 typeof(intVec)
 is.atomic(intVec)
 is.integer(intVec)
@@ -85,10 +99,14 @@ is.integer(intVec)
 ## At R3.6, the return value of a function has mutiple reference counts
 ## Therefore, changing the value of intVec will cause an object duplication,
 ## an error will be triggered
-## intVec[1]=10L
+
+tryCatch({intVec[1]=10L},error = function(e) message(e))
 
 ## You can change the duplication method to "sameObject" and force R
 ## to keep the same wrapper object after the duplication.
 
+setDuplicateMethod(intVec,"sameObject")
+intVec[1]=10L
+intVec[1]
 
 }

@@ -1,4 +1,6 @@
 #' @useDynLib AltrepPointer, .registration = TRUE
+#' @import Rcpp
+#' 
 
 
 .onUnload <- function(libpath) {

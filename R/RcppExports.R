@@ -13,6 +13,18 @@ C_create_altrep <- function(x, state) {
     .Call(`_AltrepPointer_C_create_altrep`, x, state)
 }
 
+C_get_finalizer <- function(Extptr, operation, dataType) {
+    .Call(`_AltrepPointer_C_get_finalizer`, Extptr, operation, dataType)
+}
+
+C_attachAttr <- function(R_source, R_tag, R_attr) {
+    invisible(.Call(`_AltrepPointer_C_attachAttr`, R_source, R_tag, R_attr))
+}
+
+C_format_lenght <- function(length) {
+    .Call(`_AltrepPointer_C_format_lenght`, length)
+}
+
 C_set_duplicate_method <- function(x, value) {
     invisible(.Call(`_AltrepPointer_C_set_duplicate_method`, x, value))
 }
@@ -25,20 +37,12 @@ C_set_reference_count <- function(x, count) {
     invisible(.Call(`_AltrepPointer_C_set_reference_count`, x, count))
 }
 
-C_format_lenght <- function(length) {
-    .Call(`_AltrepPointer_C_format_lenght`, length)
-}
-
-C_get_finalizer <- function(Extptr, operation) {
-    .Call(`_AltrepPointer_C_get_finalizer`, Extptr, operation)
-}
-
-C_attachAttr <- function(R_source, R_tag, R_attr) {
-    invisible(.Call(`_AltrepPointer_C_attachAttr`, R_source, R_tag, R_attr))
-}
-
 test_int <- function(len) {
     .Call(`_AltrepPointer_test_int`, len)
+}
+
+test_logical <- function(len) {
+    .Call(`_AltrepPointer_test_logical`, len)
 }
 
 rcpp_hello_world <- function() {

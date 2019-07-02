@@ -117,7 +117,7 @@ wrapPointer<-function(x,length,
   duplicateMethod <- match.arg(duplicateMethod)
   coerceMethod <- match.arg(coerceMethod)
   finalizer <- match.arg(finalizer)
-  finalizerObject=C_get_finalizer(x,finalizer)
+  finalizerObject=C_get_finalizer(x,finalizer,dataType)
   state=list("AltrepPointer",length,dataType,
              duplicateMethod=duplicateMethod,coerceMethod=coerceMethod,finalizer,
              duplicateErrorMessage,coerceErrorMessage,finalizerObject)

@@ -72,6 +72,10 @@ SEXP altrep_coerce(SEXP x, int type) {
 
 void* altrep_dataptr(SEXP x, Rboolean writeable) {
 	DEBUG(Rprintf("accessing data pointer\n"));
+	String data_type = as<String>(ALT_DATA_TYPE(x));
+	if (data_type == "logical") {
+		errorHandle("Logical pointer is not allowed to be accessed by R since R does not support it.");
+	}
 	return ALT_DATA_PTR(x);
 }
 
@@ -88,24 +92,28 @@ T altrep_Elt(SEXP x, R_xlen_t i) {
 	return ((T*)ALT_DATA_PTR(x))[i];
 }
 
-template<class T>
-R_xlen_t altrep_region(SEXP x, R_xlen_t start, R_xlen_t size, T* out) {
+template<class target_C_type,class source_C_type>
+R_xlen_t altrep_region(SEXP x, R_xlen_t start, R_xlen_t size, target_C_type* out) {
 	DEBUG(Rprintf("accessing region\n"));
 	R_xlen_t rest_len = as<R_xlen_t>(ALT_DATA_LENGTH(x)) - start;
 	R_xlen_t ncopy = rest_len > size ? size : rest_len;
-	memcpy(out, (T*)ALT_DATA_PTR(x) + start, ncopy * sizeof(T));
+	source_C_type* dataPtr = (source_C_type*)ALT_DATA_PTR(x);
+	//memcpy(out, (T*)ALT_DATA_PTR(x) + start, ncopy * sizeof(T));
+	for (R_xlen_t k = 0; k < ncopy; k++)
+		out[k] = dataPtr[k+start];
 	return ncopy;
 }
 
+
 #include <type_traits>
-template<class T1, class T2>
-void template_subset_assignment(T1* target, T1* source, T2* indx, R_xlen_t src_len, R_xlen_t ind_len) {
+template<class target_C_type,class source_C_type, class index_type>
+void template_subset_assignment(target_C_type* target, source_C_type* source, index_type* indx, R_xlen_t src_len, R_xlen_t ind_len) {
 	source = source - 1L;
 	DEBUG(Rprintf("Index:"));
 	for (R_xlen_t i = 0; i < ind_len; i++) {
 		DEBUG(Rprintf("%d,", (int)indx[i]));
 		if (indx[i] <= src_len && indx[i] > 0) {
-			if (std::is_same<T2, double>::value) {
+			if (std::is_same<index_type, double>::value) {
 				target[i] = source[(R_xlen_t)indx[i]];
 			}
 			else {
@@ -118,18 +126,18 @@ void template_subset_assignment(T1* target, T1* source, T2* indx, R_xlen_t src_l
 	}
 	DEBUG(Rprintf("\n"));
 }
-template<int SXP_TYPE, class C_TYPE>
+template<int SXP_TYPE, class target_C_TYPE, class source_C_TYPE>
 SEXP altrep_subset(SEXP x, SEXP indx, SEXP call) {
 	using namespace Rcpp;
 	R_xlen_t len = Rf_xlength(indx);
-	C_TYPE* result = Calloc(len, C_TYPE);
+	target_C_TYPE* result = Calloc(len, target_C_TYPE);
 	switch (TYPEOF(indx)) {
 	case INTSXP:
-		template_subset_assignment(result, (C_TYPE*)ALT_DATA_PTR(x),
+		template_subset_assignment(result, (source_C_TYPE*)ALT_DATA_PTR(x),
 			INTEGER(indx), Rf_xlength(x), Rf_xlength(indx));
 		break;
 	case REALSXP:
-		template_subset_assignment(result, (C_TYPE*)ALT_DATA_PTR(x),
+		template_subset_assignment(result, (source_C_TYPE*)ALT_DATA_PTR(x),
 			REAL(indx), Rf_xlength(x), Rf_xlength(indx));
 		break;
 	}
