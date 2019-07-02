@@ -1,0 +1,17 @@
+Package: AltrepPointer
+Type: Package
+Title: A wrapper for a C++ vector pointer
+Version: 1.0
+Date: 2019-07-01
+Author: Jiefei Wang
+Maintainer: Jiefei Wang <szwjf08@gmail.com>
+Description: A simple package to wrap a vector pointer. Users can then treate the pointer as a regular R vector and access its value via R functions.
+License: GPL-3
+Imports: Rcpp (>= 1.0.1)
+LinkingTo: Rcpp
+Suggests: 
+    testthat
+Depends: 
+  R (>= 3.6.0)
+RoxygenNote: 6.1.1
+Encoding: UTF-8

@@ -1,0 +1,10 @@
+inst/doc
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Rproj
+AltrepPointer.Rproj
+src/*.o
+src/*.so
+src/*.dll
