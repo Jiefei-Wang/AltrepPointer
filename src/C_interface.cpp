@@ -84,7 +84,7 @@ static void ptr_finalizer(SEXP extPtr) {
 			free(ptr);
 		}
 	}
-	catch (std::exception exp) {
+	catch (std::exception& exp) {
 		errorHandle("Error in releasing the pointer:%s\n", exp.what());
 	}
 }
