@@ -5,7 +5,18 @@ test_that("creation",{
   ptr=test_int(n)
   expect_error(wrapPointer(ptr,n))
   
+  
+  ptr=test_logical(n)
+  res=wrapPointer(ptr,n,dataType = "logical")
+  
+  ptr=test_int(n)
   res=wrapPointer(ptr,n,dataType = "integer")
+  expect_equal(res,0:(n-1))
+  
+  
+  ptr=test_real(n)
+  res=wrapPointer(ptr,n,dataType = "real")
+  expect_equal(res,0:(n-1))
 })
 
 test_that("duplicate error",{

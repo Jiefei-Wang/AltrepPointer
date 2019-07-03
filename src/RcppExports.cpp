@@ -108,6 +108,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// test_logical
+SEXP test_logical(int len);
+RcppExport SEXP _AltrepPointer_test_logical(SEXP lenSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type len(lenSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_logical(len));
+    return rcpp_result_gen;
+END_RCPP
+}
 // test_int
 SEXP test_int(int len);
 RcppExport SEXP _AltrepPointer_test_int(SEXP lenSEXP) {
@@ -119,14 +130,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// test_logical
-SEXP test_logical(int len);
-RcppExport SEXP _AltrepPointer_test_logical(SEXP lenSEXP) {
+// test_real
+SEXP test_real(int len);
+RcppExport SEXP _AltrepPointer_test_real(SEXP lenSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type len(lenSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_logical(len));
+    rcpp_result_gen = Rcpp::wrap(test_real(len));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -151,8 +162,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_AltrepPointer_C_set_duplicate_method", (DL_FUNC) &_AltrepPointer_C_set_duplicate_method, 2},
     {"_AltrepPointer_C_set_coerce_method", (DL_FUNC) &_AltrepPointer_C_set_coerce_method, 2},
     {"_AltrepPointer_C_set_reference_count", (DL_FUNC) &_AltrepPointer_C_set_reference_count, 2},
-    {"_AltrepPointer_test_int", (DL_FUNC) &_AltrepPointer_test_int, 1},
     {"_AltrepPointer_test_logical", (DL_FUNC) &_AltrepPointer_test_logical, 1},
+    {"_AltrepPointer_test_int", (DL_FUNC) &_AltrepPointer_test_int, 1},
+    {"_AltrepPointer_test_real", (DL_FUNC) &_AltrepPointer_test_real, 1},
     {"_AltrepPointer_rcpp_hello_world", (DL_FUNC) &_AltrepPointer_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };

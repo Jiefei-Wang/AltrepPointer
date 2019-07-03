@@ -74,7 +74,7 @@ void* altrep_dataptr(SEXP x, Rboolean writeable) {
 	DEBUG(Rprintf("accessing data pointer\n"));
 	String data_type = as<String>(ALT_DATA_TYPE(x));
 	if (data_type == "logical") {
-		errorHandle("Logical pointer is not allowed to be accessed by R since R does not support it.");
+		errorHandle("Logical pointer is not allowed to be accessed by R since R does not support it.\nIf you are trying to print the variable, please use `var[1:n]` instead.");
 	}
 	return ALT_DATA_PTR(x);
 }

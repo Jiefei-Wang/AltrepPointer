@@ -37,12 +37,16 @@ C_set_reference_count <- function(x, count) {
     invisible(.Call(`_AltrepPointer_C_set_reference_count`, x, count))
 }
 
+test_logical <- function(len) {
+    .Call(`_AltrepPointer_test_logical`, len)
+}
+
 test_int <- function(len) {
     .Call(`_AltrepPointer_test_int`, len)
 }
 
-test_logical <- function(len) {
-    .Call(`_AltrepPointer_test_logical`, len)
+test_real <- function(len) {
+    .Call(`_AltrepPointer_test_real`, len)
 }
 
 rcpp_hello_world <- function() {

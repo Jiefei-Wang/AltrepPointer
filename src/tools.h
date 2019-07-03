@@ -1,6 +1,6 @@
 #include <string>
 using std::string;
-#define DEBUG(x) x;
+#define DEBUG(x);
 #define charPtr(x) CHAR(Rf_asChar(x))
 #define PACKAGE_NAME "AltrepPointer"
 

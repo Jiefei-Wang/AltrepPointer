@@ -84,7 +84,7 @@ static void ptr_finalizer(SEXP extPtr) {
 			free(ptr);
 		}
 	}
-	catch (exception exp) {
+	catch (std::exception exp) {
 		errorHandle("Error in releasing the pointer:%s\n", exp.what());
 	}
 }
@@ -141,13 +141,21 @@ void C_set_reference_count(SEXP x, int count) {
 
 
 //Associated with testthat
-// [[Rcpp::export]]
-SEXP test_int(int len) {
-	int* res = new int[len];
-	return(R_MakeExternalPtr(res, R_NilValue, R_NilValue));
-}
+
 // [[Rcpp::export]]
 SEXP test_logical(int len) {
 	bool* res = new bool[len];
+	return(R_MakeExternalPtr(res, R_NilValue, R_NilValue));
+}
+// [[Rcpp::export]]
+SEXP test_int(int len) {
+	int* res = new int[len];
+	for (int i = 0; i < len; i++)res[i] = i;
+	return(R_MakeExternalPtr(res, R_NilValue, R_NilValue));
+}
+// [[Rcpp::export]]
+SEXP test_real(int len) {
+	double* res = new double[len];
+	for (int i = 0; i < len; i++)res[i] = i;
 	return(R_MakeExternalPtr(res, R_NilValue, R_NilValue));
 }
