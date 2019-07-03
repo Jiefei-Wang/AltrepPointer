@@ -20,11 +20,14 @@ SEXP test_int(int n) {
 ## 1.2 R code
 This R code call the C++ function and allocate a vector of length 10. To create a wrapper for the pointer, we need 
 to specify the pointer, length, and pointer type. For this example, they are `intPtr`, `10` and "integer" respectively.
+Since the pointer is allocated via `new` operator in C++, we set finalizer to use `delete` operator to free the pointer
+after no variable is associated with the pointer wrapper. If finalizer is not specified, the pointer will not be freed
+by the wrapper after use.
 
 ```
 n=10
 intPtr=test_int(n)
-intPtrVec=wrapPointer(intPtr,n,dataType="integer")
+intPtrVec=wrapPointer(intPtr, n, dataType="integer", finalizer="delete")
 ```
 
 Then we can access its value through `[` operator and modify it through `[<-` operator.
