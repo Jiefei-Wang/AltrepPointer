@@ -23,6 +23,7 @@ test_that("duplicate error",{
   n=10
   ptr=test_int(n)
   res=wrapPointer(ptr,n,dataType = "integer",duplicateMethod = "error")
+  res1=res
   
   expect_error({res[1]=1L})
   
@@ -32,13 +33,12 @@ test_that("duplicate error",{
   
 })
 
-
+#,duplicateMethod="sameObject"
 test_that("coerce error",{
   n=10
   ptr=test_int(n)
   res=wrapPointer(ptr,n,dataType = "integer",coerceMethod="error")
-  C_set_reference_count(res,0)
-  
+ 
   expect_error({res[1]=1})
   
   expect_equal(getCoerceMethod(res),"error")

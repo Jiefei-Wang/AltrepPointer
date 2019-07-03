@@ -42,7 +42,6 @@ SEXP altrep_duplicate(SEXP x, Rboolean deep) {
 		return NULL;
 	}
 	if (duplicate_method == "sameObject") {
-		Rprintf("check\n");
 		return x;
 	}
 	if (duplicate_method == "error") {
@@ -81,6 +80,11 @@ void* altrep_dataptr(SEXP x, Rboolean writeable) {
 
 const void* altrep_dataptr_or_null(SEXP x) {
 	DEBUG(Rprintf("accessing data pointer or null\n"));
+	String data_type = as<String>(ALT_DATA_TYPE(x));
+	if (data_type == "logical") {
+		return NULL;
+	}
+
 	return altrep_dataptr(x, Rboolean::TRUE);
 }
 

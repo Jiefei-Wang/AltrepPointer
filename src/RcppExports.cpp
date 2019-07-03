@@ -97,15 +97,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// C_set_reference_count
-void C_set_reference_count(SEXP x, int count);
-RcppExport SEXP _AltrepPointer_C_set_reference_count(SEXP xSEXP, SEXP countSEXP) {
+// C_reset_reference_count
+SEXP C_reset_reference_count(SEXP env, SEXP var_name, SEXP x);
+RcppExport SEXP _AltrepPointer_C_reset_reference_count(SEXP envSEXP, SEXP var_nameSEXP, SEXP xSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type env(envSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type var_name(var_nameSEXP);
     Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
-    Rcpp::traits::input_parameter< int >::type count(countSEXP);
-    C_set_reference_count(x, count);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(C_reset_reference_count(env, var_name, x));
+    return rcpp_result_gen;
 END_RCPP
 }
 // test_logical
@@ -161,7 +163,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_AltrepPointer_C_format_lenght", (DL_FUNC) &_AltrepPointer_C_format_lenght, 1},
     {"_AltrepPointer_C_set_duplicate_method", (DL_FUNC) &_AltrepPointer_C_set_duplicate_method, 2},
     {"_AltrepPointer_C_set_coerce_method", (DL_FUNC) &_AltrepPointer_C_set_coerce_method, 2},
-    {"_AltrepPointer_C_set_reference_count", (DL_FUNC) &_AltrepPointer_C_set_reference_count, 2},
+    {"_AltrepPointer_C_reset_reference_count", (DL_FUNC) &_AltrepPointer_C_reset_reference_count, 3},
     {"_AltrepPointer_test_logical", (DL_FUNC) &_AltrepPointer_test_logical, 1},
     {"_AltrepPointer_test_int", (DL_FUNC) &_AltrepPointer_test_int, 1},
     {"_AltrepPointer_test_real", (DL_FUNC) &_AltrepPointer_test_real, 1},

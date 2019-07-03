@@ -15,7 +15,8 @@
 #' Default is none, see details.
 #' @param finalizer character, the behavior of the finalizer.
 #' Default is none, see details.
-#' @param attributes list, attributes that will be attached to the return value
+#' @param attributes list, attributes that will be attached to the return value. The most
+#' common usage is to create a matrix.
 #' @param duplicateErrorMessage character, the error message that will be shown 
 #' when duplicateMethod="error" and a duplication occurs
 #' @param coerceErrorMessage character, the error message that will be shown 
@@ -27,6 +28,15 @@
 #' controls the behavior of the wrapper object and by default they
 #' would not do anything.
 #' 
+#' The current supported types of C++ vector pointer are `char*`, `bool*`, `int*` 
+#' and `double*`, which corresponds to `raw`, `logical`, `integer` and `real` in 
+#' the argument `dataType` respectively. For logical vector pointer, since R uses
+#' `int*` to represent it internally, this mismatch makes the ALTREP API `getDataPtr`
+#' invalid. Therefore, when the function `getDataPtr` is called for logical data
+#' type, an error message will be shown. This makes many R functions not being able
+#' to process the logical vector pointer(Which they should not be, e.g. `print`).
+#' However, users can still access(without modification) individual elements of the 
+#' logical vector through `[` operator.
 #' 
 #' `duplicateMethod` determines the behavior of the duplication function of 
 #' a wrapper. When a duplication is required, `duplicateMethod="duplicate"` will
@@ -78,18 +88,27 @@
 #' is.atomic(intVec)
 #' is.integer(intVec)
 #' 
-#' ## At R3.6, the return value of a function has mutiple reference counts
-#' ## Therefore, changing the value of intVec will cause an object duplication,
-#' ## an error will be triggered
+#' ## You can change the value in the vector point
 #' 
+#' intVec[1]=10L
+#' 
+#' ## If multiple variable name is associated with the same object,
+#' ## A memery dulplication will be triggered and an error will be
+#' ## thrown out to prevent the pointer from duplication.
+#' 
+#' tmp=intVec
 #' tryCatch({intVec[1]=10L},error = function(e) message(e))
 #' 
 #' ## You can change the duplication method to "sameObject" and force R
-#' ## to keep the same wrapper object after the duplication.
+#' ## to keep the same wrapper object after the duplication. The side effect
+#' ## is that `tmp` variable will also be modified since they share the same
+#' ## vector pointer
 #' 
 #' setDuplicateMethod(intVec,"sameObject")
 #' intVec[1]=10L
 #' intVec[1]
+#' 
+#' tmp[1]
 #' 
 #' @export
 wrapPointer<-function(x,length,
@@ -126,8 +145,7 @@ wrapPointer<-function(x,length,
   for(i in names(attributes)){
     C_attachAttr(res,i,attributes[[i]])
   }
-  C_set_reference_count(res,1)
-  res
+  C_reset_reference_count(environment(),"res",res)
 }
 
 #' Get/Set the properties of the wrapper of a vector pointer
@@ -172,4 +190,5 @@ setCoerceMethod<-function(x,value=c("coerce","error")){
   value <- match.arg(value)
   C_set_coerce_method(x,value)
 }
+
 

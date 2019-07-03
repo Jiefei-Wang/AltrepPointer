@@ -33,8 +33,8 @@ C_set_coerce_method <- function(x, value) {
     invisible(.Call(`_AltrepPointer_C_set_coerce_method`, x, value))
 }
 
-C_set_reference_count <- function(x, count) {
-    invisible(.Call(`_AltrepPointer_C_set_reference_count`, x, count))
+C_reset_reference_count <- function(env, var_name, x) {
+    .Call(`_AltrepPointer_C_reset_reference_count`, env, var_name, x)
 }
 
 test_logical <- function(len) {

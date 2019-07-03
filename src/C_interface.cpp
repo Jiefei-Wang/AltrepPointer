@@ -135,8 +135,12 @@ void C_set_coerce_method(SEXP x, SEXP value) {
 
 
 // [[Rcpp::export]]
-void C_set_reference_count(SEXP x, int count) {
-	SET_NAMED(x, count);
+SEXP C_reset_reference_count(SEXP env,SEXP var_name,SEXP x) {
+	Environment package_env(R_FindNamespace(Rf_mkString("base")));
+	Function remove = package_env["remove"];
+	remove(Named("list") = var_name, Named("envir") = env);
+	SET_NAMED(x, 0);
+	return(x);
 }
 
 
