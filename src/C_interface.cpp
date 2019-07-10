@@ -74,7 +74,7 @@ static void ptr_finalizer(SEXP extPtr) {
 	try {
 		if (operation == "delete") {
 			DEBUG(Rprintf("delete data pointer\n"));
-#define X(R_TYPE,C_TYPE) if(dataType==R_TYPE) delete (C_TYPE)ptr;
+#define X(R_TYPE,C_TYPE) if(dataType==R_TYPE) delete[] (C_TYPE)ptr;
 			typeMatch
 #undef X
 

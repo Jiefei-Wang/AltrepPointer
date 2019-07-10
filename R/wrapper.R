@@ -34,7 +34,7 @@
 #' `int*` to represent it internally, this mismatch makes the ALTREP API `getDataPtr`
 #' invalid. Therefore, when the function `getDataPtr` is called for logical data
 #' type, an error message will be shown. This makes many R functions not being able
-#' to process the logical vector pointer(Which they should not be, e.g. `print`).
+#' to process the logical vector pointer (e.g. `print`. They should be fixed in future R release,).
 #' However, users can still access(without modification) individual elements of the 
 #' logical vector through `[` operator.
 #' 
@@ -48,12 +48,14 @@
 #' Similarly, `coerceMethod` determines the behavior of the coercion function.
 #' If `coerceMethod="coerce"`, the wrapper can be coerced to the other data type
 #' and results in a normal R vector. If `coerceMethod="error"`, an error will
-#' be triggered and prevent the wrapper from duplication.
+#' be triggered and prevent the wrapper from coercion. Please note that in Rstudio,
+#' a duplication will be called before a coercion is called. This is a problem
+#' with Rstudio and please do not report this as a bug.
 #' 
 #' `finalizer` controls whether to release the memory associated with a pointer.
 #' `finalizer="none"` means not releasing the memory. `finalizer="delete"`
-#' will release the memory through `delete` operator in C++ and `finalizer="free"`
-#' will release it through `free` operator.
+#' will release the memory through `delete[]` operator and `finalizer="free"`
+#' will release it through `free` operator in C++ .
 #' 
 #' 
 #' 
@@ -62,7 +64,7 @@
 #' 
 #' ## This is a C++ function to create an integer
 #' ## vector pointer of length n. It is for illustration purpose 
-#' ## only and user should not call this function.
+#' ## only, so it is not exported from the package.
 #' ## The return value is an ExternalPtr object
 #' 
 #' intPtr=AltrepPointer:::test_int(n)
