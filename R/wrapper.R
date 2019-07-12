@@ -92,7 +92,6 @@
 #' 
 #' ## There is no difference between the wrapper and a integer vector in R
 #' 
-#' typeof(intVec)
 #' is.atomic(intVec)
 #' is.integer(intVec)
 #' 
