@@ -11,3 +11,4 @@ void warningHandle(const char* fmt, ...);
 
 void messageHandle(std::string msg);
 void messageHandle(const char* fmt, ...);
+
