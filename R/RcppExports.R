@@ -9,8 +9,8 @@ C_get_altrep_data2 <- function(x) {
     .Call(`_AltrepPointer_C_get_altrep_data2`, x)
 }
 
-C_create_altrep <- function(x, state) {
-    .Call(`_AltrepPointer_C_create_altrep`, x, state)
+C_create_altrep <- function(x, state, attrName, attributes) {
+    .Call(`_AltrepPointer_C_create_altrep`, x, state, attrName, attributes)
 }
 
 C_get_finalizer <- function(Extptr, operation, dataType) {
@@ -21,8 +21,8 @@ C_attachAttr <- function(R_source, R_tag, R_attr) {
     invisible(.Call(`_AltrepPointer_C_attachAttr`, R_source, R_tag, R_attr))
 }
 
-C_format_lenght <- function(length) {
-    .Call(`_AltrepPointer_C_format_lenght`, length)
+C_format_length <- function(length) {
+    .Call(`_AltrepPointer_C_format_length`, length)
 }
 
 C_set_duplicate_method <- function(x, value) {

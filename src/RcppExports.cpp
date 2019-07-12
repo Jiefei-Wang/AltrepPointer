@@ -28,14 +28,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_create_altrep
-SEXP C_create_altrep(SEXP x, SEXP state);
-RcppExport SEXP _AltrepPointer_C_create_altrep(SEXP xSEXP, SEXP stateSEXP) {
+SEXP C_create_altrep(SEXP x, SEXP state, SEXP attrName, SEXP attributes);
+RcppExport SEXP _AltrepPointer_C_create_altrep(SEXP xSEXP, SEXP stateSEXP, SEXP attrNameSEXP, SEXP attributesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
     Rcpp::traits::input_parameter< SEXP >::type state(stateSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_create_altrep(x, state));
+    Rcpp::traits::input_parameter< SEXP >::type attrName(attrNameSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type attributes(attributesSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_create_altrep(x, state, attrName, attributes));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -64,14 +66,14 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// C_format_lenght
-SEXP C_format_lenght(R_xlen_t length);
-RcppExport SEXP _AltrepPointer_C_format_lenght(SEXP lengthSEXP) {
+// C_format_length
+SEXP C_format_length(R_xlen_t length);
+RcppExport SEXP _AltrepPointer_C_format_length(SEXP lengthSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< R_xlen_t >::type length(lengthSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_format_lenght(length));
+    rcpp_result_gen = Rcpp::wrap(C_format_length(length));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -157,10 +159,10 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_AltrepPointer_C_get_altrep_data1", (DL_FUNC) &_AltrepPointer_C_get_altrep_data1, 1},
     {"_AltrepPointer_C_get_altrep_data2", (DL_FUNC) &_AltrepPointer_C_get_altrep_data2, 1},
-    {"_AltrepPointer_C_create_altrep", (DL_FUNC) &_AltrepPointer_C_create_altrep, 2},
+    {"_AltrepPointer_C_create_altrep", (DL_FUNC) &_AltrepPointer_C_create_altrep, 4},
     {"_AltrepPointer_C_get_finalizer", (DL_FUNC) &_AltrepPointer_C_get_finalizer, 3},
     {"_AltrepPointer_C_attachAttr", (DL_FUNC) &_AltrepPointer_C_attachAttr, 3},
-    {"_AltrepPointer_C_format_lenght", (DL_FUNC) &_AltrepPointer_C_format_lenght, 1},
+    {"_AltrepPointer_C_format_length", (DL_FUNC) &_AltrepPointer_C_format_length, 1},
     {"_AltrepPointer_C_set_duplicate_method", (DL_FUNC) &_AltrepPointer_C_set_duplicate_method, 2},
     {"_AltrepPointer_C_set_coerce_method", (DL_FUNC) &_AltrepPointer_C_set_coerce_method, 2},
     {"_AltrepPointer_C_reset_reference_count", (DL_FUNC) &_AltrepPointer_C_reset_reference_count, 3},

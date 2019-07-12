@@ -5,13 +5,18 @@ Version: 1.0
 Date: 2019-07-01
 Author: Jiefei Wang
 Maintainer: Jiefei Wang <szwjf08@gmail.com>
-Description: A simple package to wrap a vector pointer. Users can then treat the pointer as a regular R vector and access its value via R functions.
+Description: The package uses ALTREP API to wrap a vector pointer. 
+  The wrapper behaves the same as a regular R vector.
+  Users can directly manipulate the pointer without the need of calling C++ function.
 License: GPL-3
 Imports: Rcpp (>= 1.0.1)
 LinkingTo: Rcpp
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 Depends: 
   R (>= 3.6.0)
 RoxygenNote: 6.1.1
 Encoding: UTF-8
+VignetteBuilder: knitr

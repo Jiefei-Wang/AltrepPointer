@@ -47,12 +47,16 @@ SEXP C_get_altrep_data2(SEXP x) {
 }
 
 
-
+void C_attachAttr(SEXP R_source, SEXP R_tag, SEXP R_attr);
 // [[Rcpp::export]]
-SEXP C_create_altrep(SEXP x, SEXP state) {
+SEXP C_create_altrep(SEXP x, SEXP state, SEXP attrName,SEXP attributes) {
 	String dataType= as<String>(DATA_TYPE(state));
 	R_altrep_class_t altrep_class= get_altrep_class(dataType);
-	SEXP res = R_new_altrep(altrep_class, x, wrap(state));
+	SEXP res = PROTECT(R_new_altrep(altrep_class, x, wrap(state)));
+	for (int i = 0; i < LENGTH(attrName); i++) {
+		C_attachAttr(res, STRING_ELT(attrName, i), VECTOR_ELT(attributes, i));
+	}
+	UNPROTECT(1);
 	return(res);
 }
 
@@ -74,10 +78,15 @@ static void ptr_finalizer(SEXP extPtr) {
 	try {
 		if (operation == "delete") {
 			DEBUG(Rprintf("delete data pointer\n"));
+#define X(R_TYPE,C_TYPE) if(dataType==R_TYPE) delete (C_TYPE)ptr;
+			typeMatch
+#undef X
+		}
+		if (operation == "delete[]") {
+			DEBUG(Rprintf("delete[] data pointer\n"));
 #define X(R_TYPE,C_TYPE) if(dataType==R_TYPE) delete[] (C_TYPE)ptr;
 			typeMatch
 #undef X
-
 		}
 		if (operation == "free") {
 			DEBUG(Rprintf("free data pointer\n"));
@@ -107,7 +116,7 @@ void C_attachAttr(SEXP R_source, SEXP R_tag, SEXP R_attr) {
 }
 
 // [[Rcpp::export]]
-SEXP C_format_lenght(R_xlen_t length) {
+SEXP C_format_length(R_xlen_t length) {
 	return(wrap(length));
 }
 

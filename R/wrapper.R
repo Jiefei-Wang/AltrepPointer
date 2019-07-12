@@ -53,21 +53,27 @@
 #' with Rstudio and please do not report this as a bug.
 #' 
 #' `finalizer` controls whether to release the memory associated with a pointer.
-#' `finalizer="none"` means not releasing the memory. `finalizer="delete"`
-#' will release the memory through `delete[]` operator and `finalizer="free"`
-#' will release it through `free` operator in C++ .
+#' `finalizer="none"` means not releasing the memory. `finalizer="delete"` and 
+#' `finalizer="delete[]"` will release the memory through `delete` and `delete[]` 
+#' operator respectively. `finalizer="free"` will release it through `free` operator.
 #' 
 #' 
 #' 
 #' @examples 
+#' library(Rcpp)
 #' n=10
 #' 
 #' ## This is a C++ function to create an integer
-#' ## vector pointer of length n. It is for illustration purpose 
-#' ## only, so it is not exported from the package.
+#' ## vector pointer of length n. 
 #' ## The return value is an ExternalPtr object
+#' cppFunction('SEXP alloc_int(int len) {
+#' int* res = new int[len];
+#' for (int i = 0; i < len; i++) res[i] = i;
+#' return(R_MakeExternalPtr(res, R_NilValue, R_NilValue));
+#' }')
 #' 
-#' intPtr=AltrepPointer:::test_int(n)
+#' 
+#' intPtr=alloc_int(n)
 #' 
 #' ## Create a wrapper for the ExternalPtr object
 #' ## No duplication and coercion is allowed in order
@@ -77,7 +83,7 @@
 #' intVec=wrapPointer(intPtr,n,dataType="integer",
 #'                    duplicateMethod = "error",
 #'                    coerceMethod = "error",
-#'                    finalizer="delete",
+#'                    finalizer="delete[]",
 #'                    duplicateErrorMessage = "duplication is not allowed",
 #'                    coerceErrorMessage = "coercion is not allowed"
 #'                   )
@@ -117,7 +123,7 @@ wrapPointer<-function(x,length,
                        dataType=c("raw","logical","integer","real"),
                        duplicateMethod=c("duplicate","sameObject","error"),
                        coerceMethod=c("coerce","error"),
-                       finalizer=c("none","delete","free"),
+                       finalizer=c("none","delete","delete[]","free"),
                        attributes=NULL,
                        duplicateErrorMessage=NULL,
                        coerceErrorMessage=NULL
@@ -131,24 +137,32 @@ wrapPointer<-function(x,length,
   if(missing(dataType)){
     stop("Data type has to be specified.")
   }
+  if(!is.null(attributes)&&!is.list(attributes)){
+    stop("Attributes must be a list.")
+  }
   
-  
-  length=C_format_lenght(length)
+  #C_format_length
+  length=C_format_length(length)
   dataType<- match.arg(dataType)
   duplicateMethod <- match.arg(duplicateMethod)
   coerceMethod <- match.arg(coerceMethod)
   finalizer <- match.arg(finalizer)
   finalizerObject=C_get_finalizer(x,finalizer,dataType)
+  
+  
   state=list("AltrepPointer",length,dataType,
              duplicateMethod=duplicateMethod,coerceMethod=coerceMethod,finalizer,
              duplicateErrorMessage,coerceErrorMessage,finalizerObject)
-  res=C_create_altrep(x,state)
+  #C_create_altrep(x,state,attributes)
+  C_create_altrep(x,state,names(attributes),attributes)
   
-  for(i in names(attributes)){
-    C_attachAttr(res,i,attributes[[i]])
-  }
-  C_reset_reference_count(environment(),"res",res)
+  # for(i in names(attributes)){
+  #   C_attachAttr(res,i,attributes[[i]])
+  # }
+  # C_reset_reference_count(environment(),"res",res)
 }
+
+
 
 #' Get/Set the properties of the wrapper of a vector pointer
 #' 

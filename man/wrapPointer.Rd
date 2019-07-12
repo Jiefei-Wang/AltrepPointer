@@ -7,7 +7,7 @@
 wrapPointer(x, length, dataType = c("raw", "logical", "integer", "real"),
   duplicateMethod = c("duplicate", "sameObject", "error"),
   coerceMethod = c("coerce", "error"), finalizer = c("none", "delete",
-  "free"), attributes = NULL, duplicateErrorMessage = NULL,
+  "delete[]", "free"), attributes = NULL, duplicateErrorMessage = NULL,
   coerceErrorMessage = NULL)
 }
 \arguments{
@@ -26,7 +26,8 @@ Default is none, see details.}
 \item{finalizer}{character, the behavior of the finalizer.
 Default is none, see details.}
 
-\item{attributes}{list, attributes that will be attached to the return value}
+\item{attributes}{list, attributes that will be attached to the return value. The most
+common usage is to create a matrix.}
 
 \item{duplicateErrorMessage}{character, the error message that will be shown 
 when duplicateMethod="error" and a duplication occurs}
@@ -47,6 +48,15 @@ are `x`, `length` and `dataType`. The other arguments
 controls the behavior of the wrapper object and by default they
 would not do anything.
 
+The current supported types of C++ vector pointer are `char*`, `bool*`, `int*` 
+and `double*`, which corresponds to `raw`, `logical`, `integer` and `real` in 
+the argument `dataType` respectively. For logical vector pointer, since R uses
+`int*` to represent it internally, this mismatch makes the ALTREP API `getDataPtr`
+invalid. Therefore, when the function `getDataPtr` is called for logical data
+type, an error message will be shown. This makes many R functions not being able
+to process the logical vector pointer (e.g. `print`. They should be fixed in future R release,).
+However, users can still access(without modification) individual elements of the 
+logical vector through `[` operator.
 
 `duplicateMethod` determines the behavior of the duplication function of 
 a wrapper. When a duplication is required, `duplicateMethod="duplicate"` will
@@ -58,22 +68,29 @@ the wrapper from duplication.
 Similarly, `coerceMethod` determines the behavior of the coercion function.
 If `coerceMethod="coerce"`, the wrapper can be coerced to the other data type
 and results in a normal R vector. If `coerceMethod="error"`, an error will
-be triggered and prevent the wrapper from duplication.
+be triggered and prevent the wrapper from coercion. Please note that in Rstudio,
+a duplication will be called before a coercion is called. This is a problem
+with Rstudio and please do not report this as a bug.
 
 `finalizer` controls whether to release the memory associated with a pointer.
-`finalizer="none"` means not releasing the memory. `finalizer="delete"`
-will release the memory through `delete` operator in C++ and `finalizer="free"`
-will release it through `free` operator.
+`finalizer="none"` means not releasing the memory. `finalizer="delete"` and 
+`finalizer="delete[]"` will release the memory through `delete` and `delete[]` 
+operator respectively. `finalizer="free"` will release it through `free` operator.
 }
 \examples{
 n=10
 
 ## This is a C++ function to create an integer
-## vector pointer of length n. It is for illustration purpose 
-## only and user should not call this function.
+## vector pointer of length n. 
+cppFunction('SEXP alloc_int(int len) {
+int* res = new int[len];
+for (int i = 0; i < len; i++) res[i] = i;
+return(R_MakeExternalPtr(res, R_NilValue, R_NilValue));
+}')
+
 ## The return value is an ExternalPtr object
 
-intPtr=AltrepPointer:::test_int(n)
+intPtr=alloc_int(n)
 
 ## Create a wrapper for the ExternalPtr object
 ## No duplication and coercion is allowed in order
@@ -96,17 +113,26 @@ typeof(intVec)
 is.atomic(intVec)
 is.integer(intVec)
 
-## At R3.6, the return value of a function has mutiple reference counts
-## Therefore, changing the value of intVec will cause an object duplication,
-## an error will be triggered
+## You can change the value in the vector point
 
+intVec[1]=10L
+
+## If multiple variable name is associated with the same object,
+## A memery dulplication will be triggered and an error will be
+## thrown out to prevent the pointer from duplication.
+
+tmp=intVec
 tryCatch({intVec[1]=10L},error = function(e) message(e))
 
 ## You can change the duplication method to "sameObject" and force R
-## to keep the same wrapper object after the duplication.
+## to keep the same wrapper object after the duplication. The side effect
+## is that `tmp` variable will also be modified since they share the same
+## vector pointer
 
 setDuplicateMethod(intVec,"sameObject")
 intVec[1]=10L
 intVec[1]
+
+tmp[1]
 
 }

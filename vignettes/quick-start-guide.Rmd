@@ -1,0 +1,71 @@
+---
+title: "Quick start guide"
+author: "Jiefei Wang"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick_start_guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(AltrepPointer)
+library(Rcpp)
+```
+#Introduction
+The package is designed for the case where the data is located in a continuous memory space and can be accessed by a pointer, one wants to use the data in R but without allocating an R vector for it. The package is able to wrap the pointer. The return value behaves exactly same as an R vector. Since the retuen value is just a wrapper for the pointer, there is no memory duplication by calling the wrapper function. Any change in the value of the wrapper will directly change the value in the corresponding memory location.
+
+#Example
+We use an example to illustrate the package. We first allocate an integer vector of length 10 in C++, then we call the wrapper function to wrap the pointer in R.
+```{r}
+n=10
+## Define the C++ function
+cppFunction('SEXP alloc_int(int len) {
+int* res = new int[len];
+for (int i = 0; i < len; i++) res[i] = i;
+return(R_MakeExternalPtr(res, R_NilValue, R_NilValue));
+}')
+
+## The return value is an ExternalPtr object
+intPtr=alloc_int(n)
+
+## Call the wrapper function to wrap the pointer
+intVec=wrapPointer(x = intPtr, length = n, dataType = "integer",
+                   duplicateMethod = "error",
+                   coerceMethod = "error",
+                   finalizer="delete[]",
+                   duplicateErrorMessage = "duplication is not allowed",
+                   coerceErrorMessage = "coercion is not allowed"
+                  )
+```
+The minimum required arguments for the wrapper function are `x`, `length` and `dataType`. There are some additional arguments to control the behavior of the return value, please see `?wrapPointer` for more detail. In this example,  in order to make sure the variable `intVec` is always associated with the pointer, the variable `intVec` is not allowed to be duplicated or coerced. an error message will be given as shown in the last two arguments if a duplication or a coercion is required. A `delete[]` operator will be called if the vector is not in used and be garbage collected.
+
+The behavior of the variable `intVec` is exactly the same as an integer vector. It can be checked via the following code.
+
+```{r}
+## show the values
+intVec
+## subset function
+intVec[1]
+intVec[1:10]
+
+## Type check
+mode(intVec)
+typeof(intVec)
+is.vector(intVec)
+```
+
+#Session info
+sessionInfo()
+
+
+
+
+
+
+
