@@ -5,7 +5,7 @@ Version: 1.0
 Date: 2019-07-01
 Author: Jiefei Wang
 Maintainer: Jiefei Wang <szwjf08@gmail.com>
-Description: The package uses ALTREP API to wrap a vector pointer. 
+Description: This package uses ALTREP API to wrap a vector pointer. 
   The wrapper behaves the same as a regular R vector.
   Users can directly manipulate the pointer without the need of calling C++ function.
 License: GPL-3

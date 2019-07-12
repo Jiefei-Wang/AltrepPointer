@@ -78,17 +78,18 @@ with Rstudio and please do not report this as a bug.
 operator respectively. `finalizer="free"` will release it through `free` operator.
 }
 \examples{
+library(Rcpp)
 n=10
 
 ## This is a C++ function to create an integer
 ## vector pointer of length n. 
+## The return value is an ExternalPtr object
 cppFunction('SEXP alloc_int(int len) {
 int* res = new int[len];
 for (int i = 0; i < len; i++) res[i] = i;
 return(R_MakeExternalPtr(res, R_NilValue, R_NilValue));
 }')
 
-## The return value is an ExternalPtr object
 
 intPtr=alloc_int(n)
 
@@ -100,7 +101,7 @@ intPtr=alloc_int(n)
 intVec=wrapPointer(intPtr,n,dataType="integer",
                    duplicateMethod = "error",
                    coerceMethod = "error",
-                   finalizer="delete",
+                   finalizer="delete[]",
                    duplicateErrorMessage = "duplication is not allowed",
                    coerceErrorMessage = "coercion is not allowed"
                   )
